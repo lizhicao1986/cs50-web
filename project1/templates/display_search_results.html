@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Books
+{% endblock %}
+
+{% block body %}
+    <h1>Search Results</h1>
+
+    {% if num_results == 0 %} Did not find any books. {% endif %}
+    Found {{num_results}} books
+    <ul>
+        {% for book in books %}
+            <li>
+
+                    {{ book.isbn }} , {{ book.title }} ,by {{book.author}}, {{book.year}}
+
+            </li>
+        {% endfor %}
+    </ul>
+
+{% endblock %}
