@@ -81,5 +81,8 @@ def search():
 @app.route("/search_query", methods=["POST"])
 def search_query():
     query = request.form.get("query")
-    #SELECT * FROM books WHERE isbn LIKE '%jerry%' OR UPPER(title) LIKE UPPER('%Ste%')
-    return query
+    query = '%'+query+'%'
+    query = query.upper()
+    books = db.execute("SELECT * FROM books WHERE isbn LIKE :query OR UPPER(title) LIKE :query OR UPPER(author) LIKE :query ORDER BY year DESC", {'query':query})
+    num_results = db.execute("SELECT COUNT(id) FROM books WHERE isbn LIKE :query OR UPPER(title) LIKE :query OR UPPER(author) LIKE :query", {'query':query}).fetchall()
+    return render_template("display_search_results.html", books=books, num_results = num_results[0][0])
