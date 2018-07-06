@@ -1,0 +1,16 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Homepage
+{% endblock %}
+
+{% block body %}
+    <h1>Homepage</h1>
+    <h3>Welcome user{{ userid }}</h3>
+    <ul>
+      <li><a href="{{ url_for('register') }}">Register an account</a></li>
+      <li><a href="{{ url_for('login') }}">Login</a></li>
+
+    </ul>
+
+{% endblock %}

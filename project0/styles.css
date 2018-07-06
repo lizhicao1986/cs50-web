@@ -1,0 +1,38 @@
+h1 {
+    color: blue;
+    text-align: center;
+}
+@media (min-width: 500px) {
+   h1::before {
+       content: "Welcome to My Web Page!";
+   }
+}
+
+@media (max-width: 499px) {
+   h1::before {
+       content: "Welcome!";
+   }
+}
+h3 {
+  color: green;
+
+}
+#section1:hover {
+                background-color: orange;
+            }
+a::before {
+               content: "\21d2  Click here: ";
+               font-weight: bold;
+           }
+.row > div {
+     padding: 20px;
+     background-color: teal;
+     border: 2px solid black;
+ }
+
+p {
+    color: red;
+}
+#column1 {
+                background-color: orange;
+    }
