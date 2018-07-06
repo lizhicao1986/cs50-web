@@ -86,3 +86,27 @@ def search_query():
     books = db.execute("SELECT * FROM books WHERE isbn LIKE :query OR UPPER(title) LIKE :query OR UPPER(author) LIKE :query ORDER BY year DESC", {'query':query})
     num_results = db.execute("SELECT COUNT(id) FROM books WHERE isbn LIKE :query OR UPPER(title) LIKE :query OR UPPER(author) LIKE :query", {'query':query}).fetchall()
     return render_template("display_search_results.html", books=books, num_results = num_results[0][0])
+
+@app.route("/books")
+def books():
+    """Lists all books."""
+    books = db.execute("SELECT * FROM books").fetchmany(50)
+    return render_template("books.html", books=books)
+
+@app.route("/books/<int:book_id>")
+def book(book_id):
+    """Lists details about a specific book."""
+    # Make sure book exists.
+    book = db.execute("SELECT * FROM books WHERE id = :id", {"id": book_id}).fetchone()
+    if book is None:
+        return render_template("error.html", message="No such book.")
+
+    # get reviews for book, if any
+    reviews = db.execute("SELECT * FROM reviews WHERE isbn = :isbn", {"isbn":book.isbn}).fetchall()
+    if reviews is not None:
+        avg_score = db.execute("SELECT AVG(score) FROM reviews WHERE isbn = :isbn", {"isbn":book.isbn}).fetchall()
+        num_reviews = db.execute("SELECT COUNT(*) FROM reviews WHERE isbn = :isbn", {"isbn":book.isbn}).fetchall()
+        print(num_reviews[0][0])
+        print(avg_score[0][0])
+
+    return render_template("book.html", book=book, reviews=reviews, num_reviews=num_reviews[0][0], avg_score=avg_score[0][0])

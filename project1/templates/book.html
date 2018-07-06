@@ -1,0 +1,33 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Book
+{% endblock %}
+
+{% block body %}
+    <h1>Book Details</h1>
+
+    <ul>
+              <li>ISBN: {{book.isbn}} </li>
+              <li>TITLE: {{book.title}} </li>
+              <li>AUTHOR: {{book.author}} </li>
+              <li>YEAR: {{book.year}} </li>
+              <li>REVIEWS:
+                <ol>
+                  {% for review in reviews %}
+                  <li>
+                  <ul> <li>User:  {{review.reviewer_id}} </li>
+                       <li>Score: {{review.score}} </li>
+                       <li>Review: {{review.review_text}} </li>
+                  </ul>
+                </li>
+                  {% endfor %}
+                </ol>
+
+                <!-- calculated average score, and number of reviews-->
+               </li>
+               {% if num_reviews != 0 %} Number of reviews: {{num_reviews}} {% endif %}
+               {% if avg_score != 0 %} Avg. score: {{avg_score}} {% endif %}
+    </ul>
+
+{% endblock %}
