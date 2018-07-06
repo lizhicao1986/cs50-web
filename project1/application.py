@@ -1,9 +1,11 @@
 import os
-
 from flask import Flask, session, render_template, request, redirect, url_for
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
+import requests
+
+
 
 app = Flask(__name__)
 
@@ -101,7 +103,15 @@ def book(book_id):
     if book is None:
         return render_template("error.html", message="No such book.")
 
-    # get reviews for book, if any
+    # API key for calls to goodreads
+    KEY = "Xzvu8seibhnnOnte3SaU0g"
+    secret = "xEuuNsnZlphwPslb0kfjIENXXfAlSQIjOswXZqoK38M"
+    isbn = book.isbn
+    #isbn = db.execute("SELECT isbn from books WHERE id ")
+    res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "KEY", "isbns": "9781632168146"})
+    #print(res.json())
+
+    # get user reviews for book, if any
     reviews = db.execute("SELECT * FROM reviews WHERE isbn = :isbn", {"isbn":book.isbn}).fetchall()
     if reviews is not None:
         avg_score = db.execute("SELECT AVG(score) FROM reviews WHERE isbn = :isbn", {"isbn":book.isbn}).fetchall()
@@ -110,3 +120,37 @@ def book(book_id):
         print(avg_score[0][0])
 
     return render_template("book.html", book=book, reviews=reviews, num_reviews=num_reviews[0][0], avg_score=avg_score[0][0])
+
+@app.route("/add_review", methods=["POST"])
+def add_review():
+    # get information from form
+    ISBN = request.form.get("ISBN")
+    score = request.form.get("FormControlSelect")
+    review_text = request.form.get("review_text")
+
+    # make sure user has not already reviewed this book
+    # run query against session["userid"] and isbn in reviews table
+    # if db.execute("SELECT * FROM users WHERE username = :username AND password = :password", {'username': username, 'password':password}).rowcount != 0:
+    if db.execute("SELECT * FROM reviews WHERE isbn = :isbn AND reviewer_id = :reviewer_id", {'isbn': ISBN, 'reviewer_id': str(session['userid'])}).rowcount != 0:
+        return render_template("error.html", message="you have already reviewed this book.")
+
+    db.execute("INSERT INTO reviews (reviewer_id, isbn, score, review_text) VALUES (:reviewer_id, :isbn, :score, :review_text)",
+            {'reviewer_id': session['userid'], 'isbn': ISBN, 'score': score, 'review_text': review_text})
+    db.commit()
+    return redirect(url_for('books'))
+
+# res = requests.get("https://www.goodreads.com/book/review_counts.json", params={"key": "KEY", "isbns": "9781632168146"})
+# print(res.json())
+# {'books': [{
+#                 'id': 29207858,
+#                 'isbn': '1632168146',
+#                 'isbn13': '9781632168146',
+#                 'ratings_count': 0,
+#                 'reviews_count': 1,
+#                 'text_reviews_count': 0,
+#                 'work_ratings_count': 26,
+#                 'work_reviews_count': 113,
+#                 'work_text_reviews_count': 10,
+#                 'average_rating': '4.04'
+#             }]
+# }
