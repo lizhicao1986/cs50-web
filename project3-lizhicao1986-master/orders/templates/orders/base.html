@@ -5,6 +5,24 @@
     <head>
         <title>{% block title %}{% endblock %}</title>
         <link rel="stylesheet" href="{% static 'orders/styles.css' %}"/>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+        <script>
+
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // Change the layout based on dropdown changes
+            document.querySelector('#menuCategorySelect').onchange = function() {
+
+              var e = document.getElementById("menuCategorySelect");
+              var selectedType = e.options[e.selectedIndex].text;
+              console.log(selectedType);
+
+              document.querySelector('#menuCategory2').innerHTML= selectedType;
+              };
+        });
+        </script>
+
     </head>
     <body>
         {% block body %}

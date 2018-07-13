@@ -5,30 +5,28 @@
 {% endblock %}
 
 {% block body %}
-    <!-- <h1>Index</h1>
 
-    Index
-
-    <hr> -->
-    <h1>Orders</h1>
-
-    {% for order in orders %}
-        <li>
-            <a href="{% url 'order' order.id %}">
-                Order #{{ order.id }} {{ order }}
-            </a>
-        </li>
-    {% endfor %}
+    {% if user.is_authenticated %}
+      Hi {{ user.username }}!
+        <li><a href="{% url 'logout' %}">Logout</a></li>
+        <h1>Menu</h1>
+        <h4>Pizzas<h4>
+        <ul>
+        {% for pizza in Pizza %}
+            <li>{{ pizza }}</li>
+        {% endfor %}
+        </ul>
+      <hr>
+        <h4>Subs</h4>
+        <ul>
+        {% for sub in Sub %}
+            <li>{{ sub }}</li>
+        {% endfor %}
+      </ul>
+      <a href="{% url 'place_order' %}">place order</a>
+    {% else %}
+      <p>You are not logged in</p>
+      <a href="{% url 'login' %}">login</a>
+    {% endif %}
 
 {% endblock %}
-
-<!-- {% load static %}
-<!DOCTYPE html>
-<html>
-    <head>
-        <title>Orders</title>
-        <link rel="stylesheet" href="{% static 'orders/styles.css' %}"/>
-    </head>
-    <body>
-        Orders
-</html> -->

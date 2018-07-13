@@ -1,0 +1,51 @@
+{% extends "orders/base.html" %}
+
+
+{% block title %}
+    Place Order
+{% endblock %}
+
+{% block body %}
+
+
+    <script>
+    function getMenu() {
+        var x = document.getElementById("menuCategory2").innerHTML;
+        console.log(x);
+    }
+    </script>
+
+
+    {% if user.is_authenticated %}
+      Hi {{ user.username }}!
+        <li><a href="{% url 'logout' %}">Logout</a></li>
+        <hr>
+        <form>
+          <div class="form-group">
+            <label for="exampleFormControlSelect1" id="menu">Choose Menu Category</label>
+            <select class="form-control" id="menuCategorySelect">
+              <option value="Pizza">Pizza</option>
+              <option value="Subs">Subs</option>
+              <option value="Salads">Salads</option>
+              <option value="Platter">Platter</option>
+            </select>
+          </div>
+
+        </form>
+        <hr> Your Selection: <button onclick="getMenu()">Get menu</button>
+        <!-- // default -->
+        <div id="menuCategory2" onclic="getMenu()">Pizza</div>
+        {% if x == "Pizza" %}
+        {% for pizza in Pizza %}
+          <li>{{ pizza }}</li>
+        {% endfor %}
+        {% endif %}
+
+
+      <!-- <a href="{% url 'place_order' %}">place order</a> -->
+    {% else %}
+      <p>You are not logged in</p>
+      <a href="{% url 'login' %}">login</a>
+    {% endif %}
+
+{% endblock %}
